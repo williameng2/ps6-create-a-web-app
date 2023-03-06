@@ -19,7 +19,7 @@ ui <- fluidPage(
         titlePanel("Temperature Deviations (/year) by Region"),
         sidebarLayout(
           sidebarPanel(
-            checkboxGroupInput("regions", "Select regions to display:", 
+            checkboxGroupInput("regions", "Choose Regions to Display!", 
                                choices = unique(UAH$region), 
                                selected = "aust")
           ),
@@ -31,16 +31,15 @@ ui <- fluidPage(
       ),
       
       tabPanel("Table",
-        titlePanel("table of average temperature deviations by region"),
+        titlePanel("Average Deviations in Temperature (by Region)"),
      
         sidebarLayout(
           sidebarPanel(
-           radioButtons("period", "Select Time Period:",
-                      c("month", "year", "deacade"), selected = "deacade"),
-           textOutput("numObservations")
+           radioButtons("period", "Select a Time Frame!",
+                      c("Month", "Year", "Decade"), selected = "Decade")
           ),
-       
           mainPanel(
+            textOutput("numObservations"), 
             tableOutput("table")
           )
         )
@@ -82,11 +81,11 @@ server <- function(input, output) {
   })
   
   output$table <- renderTable({
-    if (input$period == "month") {
+    if (input$period == "Month") {
       UAH %>%
         group_by(year, month) %>%
         summarize(avg_temp = mean(temp))
-    } else if (input$period == "year") {
+    } else if (input$period == "Year") {
       UAH %>%
         group_by(year) %>%
         summarize(avg_temp = mean(temp))
@@ -98,12 +97,12 @@ server <- function(input, output) {
   })
   
   output$numObservations <- renderText({
-    if (input$period == "month") {
+    if (input$period == "Month") {
       numObs <- UAH %>%
         group_by(year, month) %>%
         summarize(avg_temp = mean(temp)) %>% 
         nrow()
-    } else if (input$period == "year") {
+    } else if (input$period == "Year") {
       numObs <- UAH %>%
         group_by(year) %>%
         summarize(avg_temp = mean(temp)) %>% 
